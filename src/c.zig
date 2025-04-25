@@ -841,9 +841,9 @@ pub extern fn libusb_free_interface_association_descriptors(
 pub extern fn libusb_wrap_sys_device(
     /// the context to operate on, or NULL for the default context
     ctx: ?*Context,
-    /// sys_dev	the platform-specific system device handle
+    /// the platform-specific system device handle
     sys_dev: isize,
-    /// dev_handle	output location for the returned device handle pointer. Only
+    /// output location for the returned device handle pointer. Only
     /// populated when the return code is 0.
     dev_handle: *?*DeviceHandle,
 ) callconv(.C) ErrorCode;
@@ -867,7 +867,7 @@ pub extern fn libusb_wrap_sys_device(
 pub extern fn libusb_open(
     /// the device to open
     dev: *Device,
-    /// dev_handle	output location for the returned device handle pointer. Only
+    /// output location for the returned device handle pointer. Only
     /// populated when the return code is 0.
     dev_handle: *?*DeviceHandle,
 ) callconv(.C) ErrorCode;
