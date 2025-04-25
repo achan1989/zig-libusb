@@ -195,7 +195,9 @@ pub fn build(b: *std.Build) void {
         .PLATFORM_POSIX = defineBool(target.result.os.tag != .windows),
         .PLATFORM_WINDOWS = defineBool(target.result.os.tag == .windows),
 
+        .HAVE_CLOCK_GETTIME = defineBool(target.result.os.tag != .windows),
         .HAVE_EVENTFD = defineBool(options.enable_eventfd),
+        .HAVE_LIBUDEV = defineBool(options.enable_udev),
         .HAVE_TIMERFD = defineBool(options.enable_timerfd),
 
         .ENABLE_LOGGING = defineBool(options.enable_logging),
