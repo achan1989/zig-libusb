@@ -146,7 +146,7 @@ pub const BOSType = enum(u8) {
     pub const usb_2_0_extension_size = 7;
     pub const ss_usb_device_capability_size = 10;
     pub const container_id_size = 20;
-    pub const platform_descriptor = 20;
+    pub const platform_descriptor_min_size = 20;
 
     pub const max_size = DescriptorType.bos_size + usb_2_0_extension_size + ss_usb_device_capability_size + container_id_size;
 };
@@ -686,13 +686,13 @@ pub const USB20ExtensionDescriptor = extern struct {
     /// A value of one in a bit location indicates a feature is
     /// supported; a value of zero indicates it is not supported.
     /// See libusb_usb_2_0_extension_attributes.
-    bmAttributes: packed struct {
+    bmAttributes: packed struct(u32) {
         _0: u1,
 
         /// Supports Link Power Management (LPM)
         lpm_support: bool,
 
-        _1: u6,
+        _1: u30,
     },
 };
 
@@ -1285,13 +1285,13 @@ pub const InitOptions = struct {
     use_usbdk: ?void = null,
     no_device_discovery: ?void = null,
 
-    const max = @typeInfo(c.Option).Enum.fields.len;
+    const max = @typeInfo(c.Option).@"enum".fields.len;
 
     fn toInitOptionArray(self: InitOptions) std.meta.Tuple(&.{ [max]c.InitOption, usize }) {
         var init_options_arr: [max]c.InitOption = undefined;
         var option_count: usize = 0;
-        const InitOptionValueUnion = @typeInfo(c.InitOption).Struct.fields[1].type;
-        inline for (@typeInfo(InitOptions).Struct.fields) |field| {
+        const InitOptionValueUnion = @typeInfo(c.InitOption).@"struct".fields[1].type;
+        inline for (@typeInfo(InitOptions).@"struct".fields) |field| {
             if (@field(self, field.name)) |value| {
                 init_options_arr[option_count] = .{
                     .option = @field(c.Option, field.name),
