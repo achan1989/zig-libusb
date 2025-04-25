@@ -25,7 +25,7 @@ fn configureLibusb(
 
     m.addIncludePath(dep.path("libusb"));
 
-    if (target.isDarwin()) {
+    if (target.os.tag.isDarwin()) {
         m.addIncludePath(dep.path("Xcode"));
     } else if (target.abi == .msvc) {
         m.addIncludePath(dep.path("msvc"));
@@ -142,6 +142,10 @@ fn addLibrary(
     config_header: *std.Build.Step.ConfigHeader,
     options: ConfigureOptions,
 ) void {
+    const m = b.createModule(.{
+        .target = target,
+        .optimize = optimize,
+    });
     const lib = std.Build.Step.Compile.create(b, .{
         .name = "usb",
 
@@ -151,13 +155,10 @@ fn addLibrary(
         .kind = .lib,
         .linkage = linkage,
 
-        .root_module = .{
-            .target = target,
-            .optimize = optimize,
-        },
+        .root_module = m,
     });
 
-    configureLibusb(dep, &lib.root_module, config_header, options);
+    configureLibusb(dep, m, config_header, options);
 
     lib.installHeader(dep.path("libusb/libusb.h"), "libusb.h");
 
@@ -219,7 +220,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
-    configureLibusb(dep, &lib_unit_tests.root_module, config_header, options);
+    configureLibusb(dep, lib_unit_tests.root_module, config_header, options);
 
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&b.addRunArtifact(lib_unit_tests).step);
